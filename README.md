@@ -28,5 +28,22 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+Danh sách thư viện trong `requirements.txt` được đồng bộ từ môi trường `.venv`
+hiện tại bằng lệnh:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip freeze > requirements.txt
+```
+
+Các nhóm thư viện chính:
+
+- **Web:** Django
+- **Deep learning:** PyTorch, TorchVision, TorchMetrics, Diffusers,
+  Transformers, Accelerate, PEFT
+- **Watermark và nhiễu:** Kornia, LPIPS, torchattacks, OpenCV
+- **Xử lý và đánh giá ảnh:** NumPy, Pillow, SciPy, scikit-image,
+  scikit-learn, Pandas, Matplotlib
+- **Kiểm thử:** pytest
+
 Dữ liệu nghiên cứu đặt trong `data/` và không được đưa vào Git. Các thư mục
 con dự kiến gồm `raw/`, `train/`, `val/` và `test/`.
