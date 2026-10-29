@@ -19,11 +19,13 @@ web/           Ứng dụng Django
 reports/       Báo cáo và kết quả thí nghiệm
 ```
 
-## Thiết lập môi trường
+## Thiết lập môi trường với `venv`
 
 ```powershell
-conda env create -f environment.yml
-conda activate dual-layer-watermark
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 Dữ liệu nghiên cứu đặt trong `data/` và không được đưa vào Git. Các thư mục
