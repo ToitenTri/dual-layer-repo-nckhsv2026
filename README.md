@@ -45,5 +45,15 @@ Các nhóm thư viện chính:
   scikit-learn, Pandas, Matplotlib
 - **Kiểm thử:** pytest
 
+## Thư viện theo từng người
+
+| Người | Thư viện sử dụng theo đầu việc | Tuần dùng |
+|---|---|---|
+| Tòng Đức Trí | torch, torchvision; numpy, pillow, opencv-python, tqdm; tensorboard; pywavelets; kornia, diffjpeg; scikit-image, lpips; diffusers, transformers, accelerate, safetensors, huggingface_hub | Tuần 4 trở đi; tensorboard tuần 4; pywavelets tuần 6-7; kornia, diffjpeg tuần 7; scikit-image, lpips tuần 8; diffusers, transformers, accelerate, safetensors, huggingface_hub tuần 8-14 |
+| Nguyễn Thùy Linh | numpy, pillow, opencv-python; django; python-dotenv; torch, torchvision; tensorboard | Tuần 4 trở đi; django tuần 4-6 (CSDL), 14 (web); tensorboard tuần 8; python-dotenv tuần 14 |
+| Đỗ Bích Diệp | numpy, pillow, opencv-python; django; torch, torchvision; tensorboard; peft | Tuần 4 trở đi; django tuần 4-6 (CSDL), 14 (web); tensorboard tuần 8; peft tuần 11 |
+| Lê Gia Linh | numpy, pillow, opencv-python, matplotlib; scikit-learn; transformers (CLIP) | Tuần 4 trở đi; scikit-learn tuần 4-6; transformers (CLIP) tuần 11 |
+| Vũ Uyên Linh | numpy, pillow, opencv-python, matplotlib; scikit-learn | Tuần 4 trở đi; scikit-learn tuần 4-6 |
+
 Dữ liệu nghiên cứu đặt trong `data/` và không được đưa vào Git. Các thư mục
 con dự kiến gồm `raw/`, `train/`, `val/` và `test/`.
