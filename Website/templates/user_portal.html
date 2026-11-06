@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Cổng Bảo Vệ Bản Quyền Ảnh & Chống AI (Dành cho Tác giả)</h1>
+    <p class="subtitle">Tải tác phẩm lên để nhúng đồng thời Thủy vân ẩn (Invisible Watermark) và Nhiễu đối kháng (Adversarial Noise)</p>
+
+    <form method="POST" enctype="multipart/form-data" class="upload-form">
+        <div class="form-group">
+            <label>1. Tên tác giả / Mã định danh cá nhân:</label>
+            <input type="text" name="author_id" placeholder="VD: NguyenVanA_Artist" required>
+        </div>
+        <div class="form-group">
+            <label>2. Thông điệp bản quyền cần giấu ẩn (Secret Payload):</label>
+            <input type="text" name="watermark_text" placeholder="VD: Bản quyền thuộc về Studio X - Cấm AI huấn luyện" required>
+        </div>
+        <div class="form-group">
+            <label>3. Chọn file ảnh gốc (.png, .jpg, .jpeg, .jepg - Tối đa 16MB):</label>
+            <input type="file" name="image_file" accept=".png,.jpg,.jpeg,.jepg" required>
+        </div>
+        <button type="submit" class="btn-submit">Tiến Hành Bảo Vệ Ảnh (2 Lớp)</button>
+    </form>
+
+    {% if wm_id %}
+    <div class="result-section">
+        <h2>🎉 Kết Quả Bảo Vệ Tác Phẩm (Mã ID: {{ wm_id }})</h2>
+        <p>Thời gian xử lý: <strong>{{ process_time }} giây</strong></p>
+        
+        <div class="image-comparison">
+            <div class="img-box">
+                <h3>Ảnh Gốc Của Bạn</h3>
+                <img src="{{ url_for('static', filename='uploads/' + input_image) }}">
+            </div>
+            <div class="img-box">
+                <h3>Ảnh Đã Nhúng 2 Lớp Bảo Mật</h3>
+                <img src="{{ url_for('static', filename='results/' + output_image) }}">
+                <div class="download-group">
+                    <a href="{{ url_for('static', filename='results/' + output_image) }}" download class="btn-download">⬇ Tải Ảnh Hoàn Thiện (.PNG)</a>
+                    <a href="{{ url_for('download_key', filename=key_filename) }}" class="btn-key">🔑 Tải Chứng Chỉ Khóa (.JSON)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,10 @@
+{
+    "watermark_id": "WM-CB71D653",
+    "author_id": "2455020047",
+    "secret_plaintext": "linh",
+    "encrypted_payload": "V00tQ0I3MUQ2NTN8MjQ1NTAyMDA0N3xsaW5ofDIwMjYtMTEtMDZUMTk6MzI6NDguMjUyMTk2",
+    "crypto_signature": "b427412a59c42366a41418f176c55f11e7b2da9097efcd55dcbf87563d3ef1cb",
+    "embedded_bits_str": "1011010000100111010000010010101001011001110001000010001101100110",
+    "embedded_bits_len": 64,
+    "created_at": "2026-11-06T19:32:48.252196"
+}
