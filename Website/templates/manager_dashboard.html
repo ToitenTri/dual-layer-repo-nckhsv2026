@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Bảng Điều Khiển Quản Trị & Thực Nghiệm (Manager Dashboard)</h1>
+    <p class="subtitle">Quản lý liên kết dữ liệu giữa Collection <code>experiments</code> và <code>watermarks_vault</code></p>
+
+    <!-- KHU VỰC 1: CÔNG CỤ KIỂM ĐỊNH & TRÍCH XUẤT BẢN QUYỀN (VERIFY) -->
+    <div class="verify-panel">
+        <h2>🔍 Công Cụ Kiểm Định & Trích Xuất Thủy Vân (Watermark Verification)</h2>
+        <form method="POST" enctype="multipart/form-data" class="verify-form">
+            <input type="file" name="verify_image" accept=".png,.jpg,.jpeg,.jepg" required>
+            <button type="submit" class="btn-verify">Trích xuất Bit & Đối chiếu Database</button>
+        </form>
+
+        {% if extracted_bits %}
+        <div class="verify-result">
+            <p><strong>Chuỗi 64-bit trích xuất từ ảnh:</strong> <code class="bit-code">{{ extracted_bits }}</code></p>
+            {% if verification_result %}
+                <p>✅ <strong>Kết quả đối chiếu gần nhất trong Kho Khóa (Vault):</strong></p>
+                <ul>
+                    <li><strong>Mã Watermark ID:</strong> {{ verification_result.watermark_id }}</li>
+                    <li><strong>Tác giả sở hữu:</strong> {{ verification_result.author_id }}</li>
+                    <li><strong>Thông tin ẩn gốc (Plaintext):</strong> "{{ verification_result.secret_plaintext }}"</li>
+                    <li><strong>Độ chính xác bit (Bit Accuracy):</strong> {{ verification_result.accuracy_percent }}% ({{ verification_result.matched_bits }}/{{ verification_result.total_bits }} bits khớp)</li>
+                    <li><strong>Tỷ lệ lỗi bit (BER - Bit Error Rate):</strong> {{ verification_result.ber_percent }}%</li>
+                </ul>
+            {% else %}
+                <p>❌ Không tìm thấy dữ liệu nào trong Database để đối chiếu.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- KHU VỰC 2: BẢNG QUẢN LÝ TOÀN BỘ CƠ SỞ DỮ LIỆU ĐÃ NỐI (JOINED TABLE) -->
+    <div class="logs-section">
+        <h2>📊 Cơ Sở Dữ Liệu Thực Nghiệm & Kho Mã Hóa ({{ records|length }} bản ghi)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Watermark ID</th>
+                    <th>Tác giả & Thông tin ẩn</th>
+                    <th>Chuỗi 64-Bit Nhúng & Chữ ký SHA256</th>
+                    <th>Ảnh Gốc / Ảnh Kết Quả</th>
+                    <th>Thời gian xử lý</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td><strong>{{ r.watermark_id }}</strong></td>
+                    <td>
+                        <b>Tác giả:</b> {{ r.vault_info.author_id if r.vault_info else 'N/A' }}<br>
+                        <b>Plaintext:</b> "{{ r.vault_info.secret_plaintext if r.vault_info else 'N/A' }}"
+                    </td>
+                    <td>
+                        <div class="code-scroll">
+                            <b>Bits (64):</b> {{ r.vault_info.embedded_bits_str[:24] if r.vault_info else '' }}...<br>
+                            <b>HMAC:</b> {{ r.vault_info.crypto_signature[:20] if r.vault_info else '' }}...
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('static', filename='uploads/' + r.input_image) }}" target="_blank">Xem Input</a> | 
+                        <a href="{{ url_for('static', filename='results/' + r.output_image) }}" target="_blank">Xem Output</a>
+                    </td>
+                    <td>{{ r.processing_time_sec }}s</td>
+                    <td>
+                        {% if r.vault_info %}
+                        <a href="{{ url_for('download_key', filename=r.vault_info.key_filename) }}" class="btn-small">Tải .JSON</a>
+                        {% endif %}
+                        <form action="{{ url_for('manager_delete', wm_id=r.watermark_id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn-delete" onclick="return confirm('Xóa bản ghi này khỏi cả 2 bảng?');">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center;">Chưa có dữ liệu thực nghiệm nào trong MongoDB.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

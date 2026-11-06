@@ -1,0 +1,10 @@
+{
+    "watermark_id": "WM-24B5E9FE",
+    "author_id": "2455020047",
+    "secret_plaintext": "linh",
+    "encrypted_payload": "V00tMjRCNUU5RkV8MjQ1NTAyMDA0N3xsaW5ofDIwMjYtMTEtMDVUMTk6MTI6MDQuOTEyMDcy",
+    "crypto_signature": "3f99ed53fa2a3f7a38d1643a8b492ec81ca5ca12df698afdab522bb4281def1e",
+    "embedded_bits_str": "0011111110011001111011010101001111111010001010100011111101111010",
+    "embedded_bits_len": 64,
+    "created_at": "2026-11-05T19:12:04.912072"
+}
