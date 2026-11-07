@@ -1,0 +1,1 @@
+"""WebP compression transformations."""
