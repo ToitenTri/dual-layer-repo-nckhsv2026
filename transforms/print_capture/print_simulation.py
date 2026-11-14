@@ -1,1 +1,0 @@
-"""Printed-image simulation transformations."""

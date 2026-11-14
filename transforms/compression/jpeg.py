@@ -1,1 +1,0 @@
-"""JPEG compression transformations."""
