@@ -1,0 +1,10 @@
+{
+    "watermark_id": "WM-6419AC1F",
+    "author_id": "2455020047",
+    "secret_plaintext": "linh",
+    "encrypted_payload": "V00tNjQxOUFDMUZ8MjQ1NTAyMDA0N3xsaW5ofDIwMjYtMTEtMjdUMDA6MzI6NTUuODEyMTk3",
+    "crypto_signature": "822467dc7b6083d9fe7569f7eb5814599d751a81dfd51dff6b40c1c9237efb07",
+    "embedded_bits_str": "1000001000100100011001111101110001111011011000001000001111011001",
+    "embedded_bits_len": 64,
+    "created_at": "2026-11-27T00:32:55.812197"
+}

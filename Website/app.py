@@ -112,14 +112,23 @@ def manager_dashboard():
     extracted_bits = None
     if request.method == 'POST' and 'verify_image' in request.files:
         v_file = request.files['verify_image']
-        if v_file and allowed_file(v_file.filename):
-            temp_path = os.path.join(app.config['UPLOAD_FOLDER'], "temp_verify.png")
-            v_file.save(temp_path)
-            v_matrix = cv2.imread(temp_path)
-            if v_matrix is not None:
-                extracted_bits = extract_watermark(v_matrix)
-                verification_result = db.verify_extracted_bits(extracted_bits)
-                os.remove(temp_path)
+        if v_file and v_file.filename and allowed_file(v_file.filename):
+            temp_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_verify_{uuid.uuid4().hex}.png")
+            try:
+                v_file.save(temp_path)
+                v_matrix = cv2.imread(temp_path)
+                if v_matrix is None:
+                    flash('Lỗi: Không thể đọc file ảnh cần kiểm định!', 'error')
+                else:
+                    extracted_bits = extract_watermark(v_matrix)
+                    verification_result = db.verify_extracted_bits(extracted_bits)
+            except Exception as e:
+                flash(f'Lỗi kiểm định ảnh: {str(e)}', 'error')
+            finally:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+        elif v_file and v_file.filename:
+            flash('Lỗi định dạng file kiểm định!', 'error')
 
     all_records = db.get_all_joined_records()
     return render_template('manager_dashboard.html', records=all_records, verification_result=verification_result,
