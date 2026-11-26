@@ -1,0 +1,10 @@
+{
+    "watermark_id": "WM-107140B8",
+    "author_id": "2455020047",
+    "secret_plaintext": "linh",
+    "encrypted_payload": "V00tMTA3MTQwQjh8MjQ1NTAyMDA0N3xsaW5ofDIwMjYtMTEtMjdUMDA6NTU6MzEuNTIyOTU5",
+    "crypto_signature": "d85c54dcde6cb7cc659b5dc6a5c86c7ed900029ef7390e8faf6a3e62dde5663b",
+    "embedded_bits_str": "1101100001011100010101001101110011011110011011001011011111001100",
+    "embedded_bits_len": 64,
+    "created_at": "2026-11-27T00:55:31.522959"
+}
