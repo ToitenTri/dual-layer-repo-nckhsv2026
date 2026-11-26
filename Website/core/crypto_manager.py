@@ -9,6 +9,12 @@ from config import Config
 
 class CryptoManager:
     @staticmethod
+    def signature_to_bits(signature: str, bit_length: int = 64) -> str:
+        """Chuyển đổi 16 ký tự đầu của chữ ký số HMAC sang chuỗi 64-bit nhị phân."""
+        hex_64bit = signature[:bit_length // 4]
+        return bin(int(hex_64bit, 16))[2:].zfill(bit_length)
+
+    @staticmethod
     def generate_watermark_package(secret_text: str, author_id: str = "USER_DEFAULT") -> dict:
         wm_id = f"WM-{uuid.uuid4().hex[:8].upper()}"
         timestamp = datetime.now().isoformat()
@@ -22,9 +28,7 @@ class CryptoManager:
         ).hexdigest()
 
         encoded_payload = base64.b64encode(raw_data.encode('utf-8')).decode('utf-8')
-
-        hex_64bit = signature[:16]
-        bit_string = bin(int(hex_64bit, 16))[2:].zfill(64)
+        bit_string = CryptoManager.signature_to_bits(signature, 64)
 
         package = {
             "watermark_id": wm_id,
