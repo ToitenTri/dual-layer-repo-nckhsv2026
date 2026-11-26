@@ -1,0 +1,1 @@
+"""HiDDeN model components."""
