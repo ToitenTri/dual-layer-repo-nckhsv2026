@@ -82,17 +82,19 @@ class JpegCompression(nn.Module):
         self.create_mask((1000, 1000))
 
     def create_mask(self, requested_shape):
-        if self.jpeg_mask is None or requested_shape > self.jpeg_mask.shape[1:]:
-            self.jpeg_mask = torch.empty((3,) + requested_shape, device=self.device)
+        height, width = requested_shape
+        if self.jpeg_mask is None or height > self.jpeg_mask.shape[1] or width > self.jpeg_mask.shape[2]:
+            self.jpeg_mask = torch.empty((3, height, width), device=self.device)
             for channel, weights_to_keep in enumerate(self.yuv_keep_weights):
-                mask = torch.from_numpy(get_jpeg_yuv_filter_mask(requested_shape, 8, weights_to_keep))
+                mask = torch.from_numpy(get_jpeg_yuv_filter_mask((height, width), 8, weights_to_keep))
                 self.jpeg_mask[channel] = mask
 
     def get_mask(self, image_shape):
-        if self.jpeg_mask.shape < image_shape:
-            self.create_mask(image_shape)
+        _, height, width = image_shape
+        if height > self.jpeg_mask.shape[1] or width > self.jpeg_mask.shape[2]:
+            self.create_mask((height, width))
         # return the correct slice of it
-        return self.jpeg_mask[:, :image_shape[1], :image_shape[2]].clone()
+        return self.jpeg_mask[:, :height, :width].clone()
 
     def apply_conv(self, image, filter_type: str):
 
@@ -105,7 +107,7 @@ class JpegCompression(nn.Module):
 
         image_conv_channels = []
         for channel in range(image.shape[1]):
-            image_yuv_ch = image[:, channel, :, :].unsqueeze_(1)
+            image_yuv_ch = image[:, channel, :, :].unsqueeze(1)
             image_conv = F.conv2d(image_yuv_ch, filters, stride=8)
             image_conv = image_conv.permute(0, 2, 3, 1)
             image_conv = image_conv.view(image_conv.shape[0], image_conv.shape[1], image_conv.shape[2], 8, 8)
@@ -114,7 +116,7 @@ class JpegCompression(nn.Module):
                                                        image_conv.shape[1] * image_conv.shape[2],
                                                        image_conv.shape[3] * image_conv.shape[4])
 
-            image_conv.unsqueeze_(1)
+            image_conv = image_conv.unsqueeze(1)
 
             # image_conv = F.conv2d()
 
@@ -125,8 +127,8 @@ class JpegCompression(nn.Module):
         return image_conv_stacked
 
     def forward(self, noised_and_cover):
-
         noised_image = noised_and_cover[0]
+        original_height, original_width = noised_image.shape[2:]
         # pad the image so that we can do 8x8 blocks
         pad_height = (8 - noised_image.shape[2] % 8) % 8
         pad_width = (8 - noised_image.shape[3] % 8) % 8
@@ -154,6 +156,6 @@ class JpegCompression(nn.Module):
         yuv2rgb(image_idct, image_ret_padded)
 
         # un-pad
-        noised_and_cover[0] = image_ret_padded[:, :, :image_ret_padded.shape[2]-pad_height, :image_ret_padded.shape[3]-pad_width].clone()
+        noised_and_cover[0] = image_ret_padded[:, :, :original_height, :original_width].clone()
 
         return noised_and_cover

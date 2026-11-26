@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from noise_layers.crop import get_random_rectangle_inside
+from noise_layer.crop import get_random_rectangle_inside
 
 
 class Cropout(nn.Module):
@@ -10,13 +10,17 @@ class Cropout(nn.Module):
     """
     def __init__(self, height_ratio_range, width_ratio_range):
         super(Cropout, self).__init__()
+        for name, ratio_range in (("height", height_ratio_range), ("width", width_ratio_range)):
+            if len(ratio_range) != 2 or not 0 < ratio_range[0] <= ratio_range[1] <= 1:
+                raise ValueError(f"{name} cropout ratios must satisfy 0 < min <= max <= 1")
         self.height_ratio_range = height_ratio_range
         self.width_ratio_range = width_ratio_range
 
     def forward(self, noised_and_cover):
         noised_image = noised_and_cover[0]
         cover_image = noised_and_cover[1]
-        assert noised_image.shape == cover_image.shape
+        if noised_image.shape != cover_image.shape:
+            raise ValueError("noised and cover images must have identical shapes")
 
         cropout_mask = torch.zeros_like(noised_image)
         h_start, h_end, w_start, w_end = get_random_rectangle_inside(image=noised_image,

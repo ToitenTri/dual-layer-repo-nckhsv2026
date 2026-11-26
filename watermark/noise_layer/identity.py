@@ -7,5 +7,5 @@ class Identity(nn.Module):
     def __init__(self):
         super(Identity, self).__init__()
 
-    def foward(self, noised_and_cover):
+    def forward(self, noised_and_cover):
         return noised_and_cover

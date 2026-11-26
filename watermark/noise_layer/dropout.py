@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import numpy as np
 
 class Dropout(nn.Module):
     """
@@ -8,6 +7,8 @@ class Dropout(nn.Module):
     """
     def __init__(self, keep_ratio_range):
         super(Dropout, self).__init__()
+        if len(keep_ratio_range) != 2 or not 0 <= keep_ratio_range[0] <= keep_ratio_range[1] <= 1:
+            raise ValueError("keep ratios must satisfy 0 <= min <= max <= 1")
         self.keep_min = keep_ratio_range[0]
         self.keep_max = keep_ratio_range[1]
 
@@ -16,12 +17,7 @@ class Dropout(nn.Module):
         noised_image = noised_and_cover[0]
         cover_image = noised_and_cover[1]
 
-        mask_percent = np.random.uniform(self.keep_min, self.keep_max)
-
-        mask = np.random.choice([0.0, 1.0], noised_image.shape[2], p=[1 - mask_percent, mask_percent])
-        mask_tensor = torch.tensor(mask, device=noised_image.device, dtype=torch.float)
-        # mask_tensor.unsqueeze_(0)
-        # mask_tensor.unsqueeze_(0)
-        mask_tensor = mask_tensor.expand_as(noised_image)
-        noised_and_cover = noised_image * mask_tensor + cover_image * (1-mask_tensor)
+        keep_ratio = torch.empty((), device=noised_image.device).uniform_(self.keep_min, self.keep_max)
+        mask = (torch.rand_like(noised_image[:, :1]) < keep_ratio).to(noised_image.dtype)
+        noised_and_cover[0] = noised_image * mask + cover_image * (1 - mask)
         return noised_and_cover

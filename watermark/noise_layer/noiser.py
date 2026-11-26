@@ -1,24 +1,24 @@
 import torch
 import torch.nn as nn
-from noise_layers.jpeg_compression import JpegCompression
-from noise_layers.crop import Crop
-from noise_layers.cropout import Cropout
-from noise_layers.dropout import Dropout
-from noise_layers.resize import Resize
-from noise_layers.identity import Identity
+from noise_layer.jpeg_compression import JpegCompression
+from noise_layer.crop import Crop
+from noise_layer.cropout import Cropout
+from noise_layer.dropout import Dropout
+from noise_layer.resize import Resize
+from noise_layer.identity import Identity
 
 
 class Noiser(nn.Module):
     """
     This module allows to combine different noise layers into a sequential noise module. The configuration and the sequence of the noise layers is controlled by the noise_config parameter.
     """
-    def __init__(self, noise_config: list, device: torch.device):
+    def __init__(self, noise_config: list = None, device: torch.device = torch.device("cpu")):
         super(Noiser, self).__init__()
 
         self.noise_config = noise_config
         noise_layers = []
 
-        for noise_layer_config in noise_config:
+        for noise_layer_config in noise_config or []:
             layer_type = noise_layer_config['type'].lower()
             if layer_type == 'jpeg_compression':
                 # TODO: Add jpeg compression level as a config option
@@ -35,8 +35,6 @@ class Noiser(nn.Module):
                         'interpolation_method']))
                 else:
                     noise_layers.append(Resize(noise_layer_config['resize_ratio']))
-            elif layer_type == 'rotate':
-                pass
             elif layer_type == 'identity':
                 noise_layers.append(Identity())
             else:
@@ -49,5 +47,4 @@ class Noiser(nn.Module):
 
     def forward(self, encoded_and_cover):
         return self.noise_layers(encoded_and_cover)
-
 

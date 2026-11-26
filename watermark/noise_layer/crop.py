@@ -29,17 +29,19 @@ def get_random_rectangle_inside(image, height_ratio_range, width_ratio_range):
     image_width = image.shape[3]
 
     remaining_height = int(np.rint(random_float(height_ratio_range[0], height_ratio_range[1]) * image_height))
-    remaining_width = int(np.rint(random_float(width_ratio_range[0], width_ratio_range[0]) * image_width))
+    remaining_width = int(np.rint(random_float(width_ratio_range[0], width_ratio_range[1]) * image_width))
+    remaining_height = min(max(remaining_height, 1), image_height)
+    remaining_width = min(max(remaining_width, 1), image_width)
 
     if remaining_height == image_height:
         height_start = 0
     else:
-        height_start = np.random.randint(0, image_height - remaining_height)
+        height_start = np.random.randint(0, image_height - remaining_height + 1)
 
     if remaining_width == image_width:
         width_start = 0
     else:
-        width_start = np.random.randint(0, image_width - remaining_width)
+        width_start = np.random.randint(0, image_width - remaining_width + 1)
 
     return height_start, height_start+remaining_height, width_start, width_start+remaining_width
 
@@ -56,20 +58,22 @@ class Crop(nn.Module):
         :param width_ratio_range:
         """
         super(Crop, self).__init__()
+        for name, ratio_range in (("height", height_ratio_range), ("width", width_ratio_range)):
+            if len(ratio_range) != 2 or not 0 < ratio_range[0] <= ratio_range[1] <= 1:
+                raise ValueError(f"{name} crop ratios must satisfy 0 < min <= max <= 1")
         self.height_ratio_range = height_ratio_range
         self.width_ratio_range = width_ratio_range
 
 
     def forward(self, noised_and_cover):
         noised_image = noised_and_cover[0]
+        if noised_image.shape != noised_and_cover[1].shape:
+            raise ValueError("noised and cover images must have identical shapes")
         # crop_rectangle is in form (from, to) where @from and @to are 2D points -- (height, width)
 
         h_start, h_end, w_start, w_end = get_random_rectangle_inside(noised_image, self.height_ratio_range, self.width_ratio_range)
 
-        noised_and_cover[0] = noised_image[
-                :,
-                :,
-                h_start: h_end,
-                w_start: w_end].clone()
+        noised_and_cover[0] = noised_image[:, :, h_start:h_end, w_start:w_end].clone()
+        noised_and_cover[1] = noised_and_cover[1][:, :, h_start:h_end, w_start:w_end].clone()
 
         return noised_and_cover
