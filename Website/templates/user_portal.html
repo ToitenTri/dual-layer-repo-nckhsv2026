@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Cổng Bảo Vệ Bản Quyền Ảnh & Chống AI (Dành cho Tác giả)</h1>
+    <h1>Cổng Bảo Vệ Bản Quyền Ảnh & Chống AI</h1>
     <p class="subtitle">Tải tác phẩm lên để nhúng đồng thời Thủy vân ẩn (Invisible Watermark) và Nhiễu đối kháng (Adversarial Noise)</p>
 
     <form method="POST" enctype="multipart/form-data" class="upload-form">
@@ -16,12 +16,12 @@
             <label>3. Chọn file ảnh gốc (.png, .jpg, .jpeg, .jepg - Tối đa 16MB):</label>
             <input type="file" name="image_file" accept=".png,.jpg,.jpeg,.jepg" required>
         </div>
-        <button type="submit" class="btn-submit">Tiến Hành Bảo Vệ Ảnh (2 Lớp)</button>
+        <button type="submit" class="btn-submit">Tiến Hành Bảo Vệ Ảnh</button>
     </form>
 
     {% if wm_id %}
     <div class="result-section">
-        <h2>🎉 Kết Quả Bảo Vệ Tác Phẩm (Mã ID: {{ wm_id }})</h2>
+        <h2>Kết Quả Bảo Vệ Tác Phẩm (Mã ID: {{ wm_id }})</h2>
         <p>Thời gian xử lý: <strong>{{ process_time }} giây</strong></p>
         
         <div class="image-comparison">
@@ -30,7 +30,7 @@
                 <img src="{{ url_for('static', filename='uploads/' + input_image) }}">
             </div>
             <div class="img-box">
-                <h3>Ảnh Đã Nhúng 2 Lớp Bảo Mật</h3>
+                <h3>Ảnh đã được bảo mật.</h3>
                 <img src="{{ url_for('static', filename='results/' + output_image) }}">
                 <div class="download-group">
                     <a href="{{ url_for('static', filename='results/' + output_image) }}" download class="btn-download">⬇ Tải Ảnh Hoàn Thiện (.PNG)</a>
